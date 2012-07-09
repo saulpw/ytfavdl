@@ -1,0 +1,38 @@
+#favs {
+    display: table;
+    line-height: 1.5em;
+    border-style: solid;
+    border-width: 2px; 
+    margin: 10px;
+}
+
+.row {
+    display: table-row;
+    border-style: solid;
+    border-width: 1px; 
+}
+
+.header {
+    font-weight: bold;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.cell {
+    display: table-cell;
+    border-style: solid;
+    border-width: 1px 1px;  
+    padding:5px;
+}
+
+.alt {
+    background-color: #c0ffff;
+}
+
+.over
+{
+    background-color: #808080;
+}
+
+.nav { float: left; }
+#favs { clear: both; }

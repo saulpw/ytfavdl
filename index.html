@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js"></script>
+    <script>
+        function addVideo(i, video)
+        {
+            var title = $(video).children("title").text();
+            var parts = $(video).children("id").text().split("/");
+            var id = parts[parts.length - 1];
+            var t = $(video).attr("t");
+            var normtitle = title.replace(/&/g, "And")
+            normtitle = normtitle.replace(/\//g, "")
+            normtitle = normtitle.replace(/[^\w-]/g, "")
+            var xlateurl = "/yt2mp3/" + normtitle + ".mp3?video_id=" + id + "&t=" + t;
+            var html = '<div class="row"><div class="cell"><a href="' + xlateurl + '">' + title + '</a> (<a href="http://www.youtube.com/watch?v=' + id + '">Youtube</a>)</div></div>'
+            $("#favs").append(html);
+        }
+
+        function loadNewSet()
+        {
+               $("#status").html("This might take a second or two...");
+               var username = $("form :input").val();
+               var qstr = "users/" + username + "/favorites?max-results=5&start-index=" + start;
+               $.get("annotube.py", { 'q': qstr }, function (xml) {
+//                    $("#favs").hide()
+                    $("#favs").empty();
+                    var entries = $("entry", xml);
+                    if (entries.length > 0)
+                    {
+                        $.each(entries, addVideo);
+                        if (start < 5)
+                            $("#prev").hide()
+                        else
+                            $("#prev").show()
+
+                        $("#next").show();
+
+                        $("#status").html("Right-click and 'Save As' on each video to download as MP3");
+                        $("#log").html("favorites #" + start + " to #" + (start + 4));
+//                       $("#favs").show("slow");
+                    }
+                    else
+                    {
+                        $("#status").text("No entries found.");
+                    }
+               });
+        }
+
+        var start = 1;
+
+        $(document).ready(function () {
+          $(".nav").hide()
+
+          $("button#getfavs").click(function (e) {
+               e.preventDefault();
+               start = 1;
+
+               loadNewSet()
+          });
+
+          $("#nextpage").click(function (e) {
+               e.preventDefault();
+               start += 5;
+               loadNewSet()
+          });
+          $("#prevpage").click(function (e) {
+               e.preventDefault();
+               start -= 5;
+               loadNewSet()
+          });
+
+        });
+
+    </script>
+
+    <title>Download Your Favorited Youtube Videos as MP3</title>
+  </head>
+
+  <body>
+    <h2>Download Your Favorited Youtube Videos as MP3</h2>
+      <form>
+          Youtube username: <input type="text" name="yt_username" value="" />
+          <button id="getfavs">Get Favorites</button>
+      </form>
+      <div id="status"></div>
+      <div id="prev" class="nav">
+         <a id="prevpage" href="#">Prev 5/</a>
+      </div>
+      <div id="next" class="nav">
+         <a id="nextpage" href="#">Next 5</a>
+      </div>
+      <div id="favs"></div>
+      <div id="log"></div>
+  </body>
+</html>    
